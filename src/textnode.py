@@ -1,4 +1,7 @@
 class TextNode():
+
+    ''' Intermediaire between text node Markdown x HTML node '''
+
     def __init__(self, text, text_type: 'bold' or 'italic', url=None):
         self.text = text
         self.text_type = text_type

@@ -1,5 +1,6 @@
 import unittest
 
+from test_helpers import log_test, log_test_with
 from textnode import TextNode
 
 # -------------------------------- EQUAL CASES ------------------------------- #
@@ -50,7 +51,6 @@ equal_cases_OK = equal_intro_case + (
         ),
     )
 )
-
 equal_cases_NOK = (
     (
         # equal test: 1 same + 1 diff arg for each - no third arg - no error for optional third
@@ -75,9 +75,9 @@ equal_cases_NOK = (
 # -------------------------------- REPR CASES -------------------------------- #
 repr_cases_OK = (
     (
-                (
-                    TextNode('Node text', 'italic')
-                ),
+        (
+            TextNode('Node text', 'italic')
+        ),
         "TextNode(Node text, italic, None)"
     ),
     (
@@ -88,26 +88,11 @@ repr_cases_OK = (
     )
 )
 
-
-def log_test_cases(tests_number=0):
-    ''' Log test decorator - curry for number of sub tests to print
-    Example:
-            @log_test_cases(1)
-            def print_hi():
-                    print('hi')
-
-            # ▶️ Asserting 1 "print hi"
-
-    '''
-    def log_test(fn):
-        message = f'▶️ Asserting {tests_number} "{fn.__name__.replace("_", " ")}"'
-        print(message)
-        return fn
-    return log_test
+log_test('TestTextNode')
 
 
 class TestTextNode(unittest.TestCase):
-    @log_test_cases(len(equal_cases_OK + equal_cases_NOK))
+    @log_test_with(len(equal_cases_OK + equal_cases_NOK))
     def test_equality(self):
         for test_case in equal_cases_OK:
             self.assertEqual(*test_case[0])
@@ -115,7 +100,7 @@ class TestTextNode(unittest.TestCase):
         for test_case in equal_cases_NOK:
             self.assertNotEqual(*test_case[0])
 
-    @log_test_cases(len(repr_cases_OK))
+    @log_test_with(len(repr_cases_OK))
     def test_representation(self):
         for test_case in repr_cases_OK:
             self.assertEqual(test_case[0].__repr__(), test_case[1])
