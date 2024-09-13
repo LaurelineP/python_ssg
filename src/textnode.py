@@ -1,5 +1,5 @@
 class TextNode():
-    def __init__(self, text, text_type: 'bold' or 'italic', url):
+    def __init__(self, text, text_type: 'bold' or 'italic', url=None):
         self.text = text
         self.text_type = text_type
         self.url = url
