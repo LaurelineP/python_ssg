@@ -22,7 +22,7 @@ class HTMLNode():
         if not self.props == None:
             attributes_str = []
             for prop in self.props:
-                attributes_str.append(f"{prop}={self.props[prop]}")
+                attributes_str.append(f'{prop}="{self.props[prop]}"')
             return f" {' '.join(attributes_str)}"
         return ''
 

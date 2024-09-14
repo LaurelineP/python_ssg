@@ -29,10 +29,14 @@ representation_equal_cases = (
 
 raise_error_cases = (
     (
-        HTMLNode('a', 'the link', ['hello', 'word'],
-                 {'href': 'https://hello.world'}).props_to_html,
-        ''
-    )
+        HTMLNode(
+            'a',
+            'the link',
+            ['hello', 'word'],
+            {'href': 'https://hello.world'}
+        ).props_to_html(),
+        ' href="https://hello.world"'
+    ),
 )
 
 log_test('TestHTMLNode')
@@ -41,13 +45,11 @@ log_test('TestHTMLNode')
 class TestHTMLNode(unittest.TestCase):
     @log_test_with(len(representation_equal_cases))
     def test_representation_test(self):
-        for case in representation_equal_cases:
-            self.assertEqual(str(case[0]), case[1])
+        assertEqual(representation_equal_cases, str)
 
     @log_test_with(len(raise_error_cases))
     def test_raise_errors(self):
-        for case in representation_equal_cases:
-            self.assertEqual(str(case[0]), case[1])
+        assertEqual(raise_error_cases)
 
 
 if __name__ == "__main__":
