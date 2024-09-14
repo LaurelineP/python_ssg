@@ -40,3 +40,8 @@ def assertEqual(assertions: [] or (), format_case=None):
     for case in assertions:
         _case = format_case(case[0]) if format_case else case[0]
         unittest.TestCase().assertEqual(_case, case[1])
+
+
+def assertRaises(assertions: [] or ()):
+    for case_args, error in assertions:
+        unittest.TestCase().assertRaises(error, *case_args)

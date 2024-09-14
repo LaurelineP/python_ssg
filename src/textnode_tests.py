@@ -1,7 +1,8 @@
 import unittest
 
-from test_helpers import log_test, log_test_with
-from textnode import TextNode
+# from helpers import text_node_to_html_node
+from test_helpers import *
+from textnode import *
 
 # -------------------------------- EQUAL CASES ------------------------------- #
 equal_intro_case = (
@@ -104,6 +105,156 @@ class TestTextNode(unittest.TestCase):
     def test_representation(self):
         for test_case in repr_cases_OK:
             self.assertEqual(test_case[0].__repr__(), test_case[1])
+
+
+# -------------------------------- REPR CASES -------------------------------- #
+textnode_to_html = (
+    (
+        text_node_to_html_node(TextNode('regular text', 'text')),
+        'regular text'
+    ),
+    (
+        text_node_to_html_node(TextNode('bold text', 'bold')),
+        '<b>bold text</b>'
+    ),
+    (
+        text_node_to_html_node(TextNode('italic text', 'italic')),
+        '<i>italic text</i>'
+    ),
+    (
+        text_node_to_html_node(TextNode('code text', 'code')),
+        '<code>code text</code>'
+    ),
+    (
+        text_node_to_html_node(
+            TextNode('link text', 'link', "https://links.co")),
+        '<a href="https://links.co">link text</a>'
+    ),
+
+)
+
+log_test('TestTextNodeToHTML')
+
+
+class TestTextNodeToHTML(unittest.TestCase):
+
+    @log_test_with(len(textnode_to_html))
+    def test_representation(self):
+        assertEqual(textnode_to_html)
+
+
+split_nodes_delimiter_cases = (
+    # testing absent optional text_type ( to changed to )
+    (
+        split_nodes_delimiter(
+            [TextNode("This is text with a `code block` word",  'text')],
+            "`"
+        ),
+        '[TextNode(This is text with a , text, None), TextNode(code block, code, None), TextNode( word, text, None)]'
+    ),
+
+    # testing absent optional text_type ( to changed to )
+    (
+        split_nodes_delimiter(
+            [TextNode("This is text with a `code block` word",  'text')],
+            "`", 'code'
+        ),
+        '[TextNode(This is text with a , text, None), TextNode(code block, code, None), TextNode( word, text, None)]'
+    ),
+    # testing multiple nodes
+    (
+        split_nodes_delimiter(
+            [
+                TextNode("This is text with a `code block` word",  'text'),
+                TextNode("This is text with a `code block` word",  'text'),
+                TextNode("This is text with a `code block` word",  'text'),
+            ],
+            "`", 'code'
+        ),
+        '[TextNode(This is text with a , text, None), TextNode(code block, code, None), TextNode( word, text, None), TextNode(This is text with a , text, None), TextNode(code block, code, None), TextNode( word, text, None), TextNode(This is text with a , text, None), TextNode(code block, code, None), TextNode( word, text, None)]'
+    ),
+    # Ensures all nodes are at the same level
+    (
+        len(split_nodes_delimiter(
+            [
+                TextNode("This is text with a `code block` word",  'text'),
+                TextNode("This is text with a `code block` word",  'text'),
+                TextNode("This is text with a `code block` word",  'text'),
+            ],
+            "`", 'code'
+        )),
+        '9'
+    ),
+    # # override non conventionned delimiter by another text type
+    (
+        split_nodes_delimiter(
+            [TextNode("This is text with a `code block` word", 'text')],
+            "`", 'italic'
+        ),
+        '[TextNode(This is text with a , text, None), TextNode(code block, italic, None), TextNode( word, text, None)]'
+    ),
+    (
+        split_nodes_delimiter(
+            [TextNode("This is text with a `code block` word", 'text')],
+            "`", 'italic'
+        ),
+        '[TextNode(This is text with a , text, None), TextNode(code block, italic, None), TextNode( word, text, None)]'
+    ),
+)
+
+split_nodes_delimiter_error_cases = (
+    # tests incorrect delimiter
+    (
+        (
+            # caller
+            split_nodes_delimiter,
+
+            # args
+            [TextNode(
+                "This should be an `error text` word",
+                'text'
+            )],
+            "+",
+            'italic'
+        ),
+        # expected type of raised error
+        Exception
+    ),
+    (
+        (
+            # caller
+            split_nodes_delimiter,
+
+            # args
+            [TextNode(
+                "This should be an `error text` word",
+                'text'
+            )],
+            "`",
+            'blob'
+        ),
+        # expected type of raised error
+        Exception
+    )
+)
+
+log_test('TestDelimitedTextNode')
+
+
+class TestDelimitedTextNode(unittest.TestCase):
+
+    @log_test_with(len(split_nodes_delimiter_cases))
+    def test_representations(self):
+        assertEqual(split_nodes_delimiter_cases, str)
+
+
+log_test('TestDelimiterTextNodeError')
+
+
+class TestDelimiterTextNodeError(unittest.TestCase):
+    @log_test_with(len(split_nodes_delimiter_error_cases))
+    def test_errors(self):
+        assertRaises(split_nodes_delimiter_error_cases)
 
 
 if __name__ == "__main__":
