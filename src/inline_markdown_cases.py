@@ -13,10 +13,26 @@ split_nodes_delimiter_cases = (
     # testing absent optional text_type ( to changed to )
     (
         split_nodes_delimiter(
-            [TextNode("This is text with a `code block` word",  'text')],
+            [TextNode("This text with a `code block` word",  'text')],
             "`", 'code'
         ),
-        '[TextNode(This is text with a , text, None), TextNode(code block, code, None), TextNode( word, text, None)]'
+        '[TextNode(This text with a , text, None), TextNode(code block, code, None), TextNode( word, text, None)]'
+    ),
+    # testing italic
+    (
+        split_nodes_delimiter(
+            [TextNode("This *italic text* example",  'text')],
+            "*"
+        ),
+        '[TextNode(This , text, None), TextNode(italic text, italic, None), TextNode( example, text, None)]'
+    ),
+    # testing bold
+    (
+        split_nodes_delimiter(
+            [TextNode("This **bold text** example",  'text')],
+            "**"
+        ),
+        '[TextNode(This , text, None), TextNode(bold text, bold, None), TextNode( example, text, None)]'
     ),
     # testing multiple nodes
     (
@@ -174,24 +190,24 @@ split_images_and_links_cases = (
     (
         split_images_and_links([TextNode(
             "This is text with a link [to boot dev](https://www.boot.dev) and [to youtube](https://www.youtube.com/@bootdotdev)",
-            TextType.TEXT
+            'text'
         )]),
-        "[TextNode(This is text with a link , TextType.TEXT, None), TextNode(to boot dev, TextType.LINK, https://www.boot.dev), TextNode( and , TextType.TEXT, None), TextNode(to youtube, TextType.LINK, https://www.youtube.com/@bootdotdev)]"
+        "[TextNode(This is text with a link , text, None), TextNode(to boot dev, link, https://www.boot.dev), TextNode( and , text, None), TextNode(to youtube, link, https://www.youtube.com/@bootdotdev)]"
     ),
     # test media images
     (
         split_images_and_links([TextNode(
             "This is text with an image ![boot dev logo](https://www.boot.dev/img/bootdev-logo-full-small.webp)",
-            TextType.TEXT
+            'text'
         )]),
-        "[TextNode(This is text with an image , TextType.TEXT, None), TextNode(boot dev logo, TextType.IMAGE, https://www.boot.dev/img/bootdev-logo-full-small.webp)]"
+        "[TextNode(This is text with an image , text, None), TextNode(boot dev logo, image, https://www.boot.dev/img/bootdev-logo-full-small.webp)]"
     ),
-    # test both media (link and image) - TO REVIEW: failing
-    # (
-    #     split_images_and_links([TextNode(
-    #         "![boot dev logo](https://www.boot.dev/img.webp) and [youtube](https://www.youtube.com/@bootdotdev)",
-    #         TextType.TEXT
-    #     )]),
-    #     "[TextNode(boot dev logo, TextType.IMAGE, https://www.boot.dev/img.webp), TextNode( and , TextType.Text, None), TextNode(youtube, TextType.LINK, https://www.youtube.com/@bootdotdev)]"
-    # ),
+    # test both media (link and image)
+    (
+        split_images_and_links([TextNode(
+            "![boot dev logo](https://www.boot.dev/img.webp) and [youtube](https://www.youtube.com/@bootdotdev)",
+            'text'
+        )]),
+        "[TextNode(boot dev logo, image, https://www.boot.dev/img.webp), TextNode( and , text, None), TextNode(youtube, link, https://www.youtube.com/@bootdotdev)]"
+    ),
 )

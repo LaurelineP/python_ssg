@@ -6,6 +6,7 @@ from textnode import *
 pattern_img = r'!\[\w.*?\]\(https?://\w.*?\)'
 pattern_link = r'\[\w.*?\]\(https?://\w.*?\)'
 pattern_link2 = r"\[\w.+?\]\(\w.+?\)"
+media_pattern = rf"{pattern_img}|{pattern_link}"
 
 
 # ---------------------------------------------------------------------------- #
@@ -77,20 +78,15 @@ def split_nodes_delimiter(original_nodes: [TextNode], delimiter: str, text_type:
     return new_node_parts
 
 
-# wip
 def assign_media_text_node(string):
-    print('\n🔥🔥', string)
     link = extract_markdown_links(string)
     image = extract_markdown_images(string)
 
-    _type = TextType.IMAGE if '![' in string else TextType.LINK
-    print('❌TYPE SHOULD BE ', _type)
-
     if image:
-        return TextNode(image[0][0], TextType.IMAGE, image[0][1])
+        return TextNode(image[0][0], 'image', image[0][1])
     elif link:
-        return TextNode(link[0][0], TextType.LINK, link[0][1])
-    return TextNode(string, TextType.TEXT)
+        return TextNode(link[0][0], 'link', link[0][1])
+    return TextNode(string, 'text')
 
 
 def split_images_and_links(original_nodes):
@@ -99,33 +95,15 @@ def split_images_and_links(original_nodes):
     for node in original_nodes:
         text = node.text
 
-        # links and images shares the same syntax []()
-        # but images has a prefix of !
-        # hence we use the priority on image
-        # ==> if an image content is found
-        # ( despite a match in link )
-        # ==> (the image content is prioritized )
-        # ==> the pattern is `pattern_img`
-        # ==> else the pattern is `pattern_link`
-        # Contained in `medias`
-        images = re.findall(pattern_img, text)
-        links = re.findall(pattern_link, text)
-        print('🦄 images', images)
-        print('🦄 links', links)
-        # media kind list
-        medias = images if images else links
+        # media kind list - matches both link and image
+        medias = re.findall(media_pattern, text)
 
-        # media pattern - inherited from prior priority
-        # pattern = pattern_img if images else pattern_link
-        pattern = pattern_img if images else pattern_link
+        # raw text content list
+        other_texts = re.split(media_pattern, text)
 
-        # text content list
-        # other_texts = re.split(pattern, text)
-        other_texts = re.split(pattern, text)
-        # print('❌other_texts', other_texts)
         # merged list
         both = [*filter(lambda x: len(x), medias + other_texts)]
-        print('both', both)
+
         # retrieving term string and their indexes - in order later to sort them
         final = []
         for i in range(len(both)):
