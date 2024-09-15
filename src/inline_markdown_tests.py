@@ -39,3 +39,12 @@ class TestExtractMarkdownLinks(unittest.TestCase):
     @log_test_with(len(extract_md_links_cases))
     def test_extract_markdown_image(self):
         assertEqual(extract_md_links_cases)
+
+
+log_test('TestSplitNodes')
+
+
+class TestSplitNodes(unittest.TestCase):
+    @log_test_with(len(split_images_and_links_cases))
+    def test_split_text_nodes(self):
+        assertEqual(split_images_and_links_cases, str)

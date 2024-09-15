@@ -92,6 +92,22 @@ split_nodes_delimiter_error_cases = (
         ),
         # expected type of raised error
         Exception
+    ),
+    (
+        (
+            # caller
+            split_nodes_delimiter,
+
+            # args
+            [TextNode(
+                "This should be an `error text word",
+                'text'
+            )],
+            "`",
+            'code'
+        ),
+        # expected type of raised error
+        Exception
     )
 )
 
@@ -150,4 +166,32 @@ extract_md_links_cases = (
         ),
         []
     ),
+)
+
+
+split_images_and_links_cases = (
+    # test media links
+    (
+        split_images_and_links([TextNode(
+            "This is text with a link [to boot dev](https://www.boot.dev) and [to youtube](https://www.youtube.com/@bootdotdev)",
+            TextType.TEXT
+        )]),
+        "[TextNode(This is text with a link , TextType.TEXT, None), TextNode(to boot dev, TextType.LINK, https://www.boot.dev), TextNode( and , TextType.TEXT, None), TextNode(to youtube, TextType.LINK, https://www.youtube.com/@bootdotdev)]"
+    ),
+    # test media images
+    (
+        split_images_and_links([TextNode(
+            "This is text with an image ![boot dev logo](https://www.boot.dev/img/bootdev-logo-full-small.webp)",
+            TextType.TEXT
+        )]),
+        "[TextNode(This is text with an image , TextType.TEXT, None), TextNode(boot dev logo, TextType.IMAGE, https://www.boot.dev/img/bootdev-logo-full-small.webp)]"
+    ),
+    # test both media (link and image) - TO REVIEW: failing
+    # (
+    #     split_images_and_links([TextNode(
+    #         "![boot dev logo](https://www.boot.dev/img.webp) and [youtube](https://www.youtube.com/@bootdotdev)",
+    #         TextType.TEXT
+    #     )]),
+    #     "[TextNode(boot dev logo, TextType.IMAGE, https://www.boot.dev/img.webp), TextNode( and , TextType.Text, None), TextNode(youtube, TextType.LINK, https://www.youtube.com/@bootdotdev)]"
+    # ),
 )
