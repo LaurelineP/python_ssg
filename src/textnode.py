@@ -1,7 +1,7 @@
 import re
 from enum import Enum
 
-from leafnode import LeafNode
+from htmlnode import LeafNode
 
 
 class TextNode():
@@ -74,83 +74,3 @@ def text_node_to_html_node(text_node_entity: TextNode):
             return LeafNode('a', value, {"href": url}).to_html()
         elif TextType[text_type] == TextType.IMAGE:
             return LeafNode('img', value, {"src": url, "alt": value}).to_html()
-
-
-def split_nodes_delimiter(original_nodes: [TextNode], delimiter: str, text_type: str = None):
-    # print('😱', not delimiter.upper() in type_delimiters.keys())
-    # if delimiter and not delimiter.upper() in type_delimiters.values():
-    #     raise Exception('Invalid Markdown syntax')
-
-    # for each node - string splitted
-    texts = [*map(
-        lambda node: node.text.split(delimiter),
-        original_nodes
-    )]
-
-    # finds text type accorded to delimiter
-    delimited_type = text_type or None
-    if not delimited_type:
-        for delimiter_details in type_delimiters.items():
-            if delimiter in delimiter_details:
-                delimited_type = delimiter_details[0].lower()
-                break
-
-    has_closing_delimiter = all(map(lambda x: x.text.count(delimiter) %
-                                    2 == 0, original_nodes))
-    is_known_delimiter = delimiter in type_delimiters.values()
-
-    is_know_text_type = delimited_type.upper() in type_delimiters.keys()
-    if not is_known_delimiter or not has_closing_delimiter:
-        raise Exception('Invalid Markdown syntax')
-
-    if not is_know_text_type:
-        raise Exception('Invalid text type for Markdown')
-
-    # create adjusted TextNode for each splitted strings
-    new_node_parts = []
-    for text_parts in texts:
-        for text_part in text_parts:
-            _type = 'text' \
-                if text_part.startswith(' ') or text_part.endswith(' ') \
-                else delimited_type
-            new_node_parts.append(TextNode(text_part, _type))
-
-    return new_node_parts
-
-
-def extract_markdown_images(string):
-    pattern_img = r'!\[\w.*?\]\(https?://\w.*?\)'
-    pattern_removable = r"!\[|\]\(|\)"
-
-    # all markdown string
-    markdown_images = re.findall(pattern_img, string)
-
-    # markdowns image text infos - without markdown syntax
-    markdown_images_details = [
-        tuple(
-            map(
-                lambda s: re.sub(pattern_removable, '', s),
-                image.split('](')
-            ))
-        for image in markdown_images
-    ]
-    return markdown_images_details
-
-
-def extract_markdown_links(string):
-    pattern_link = r'\[\w.*?\]\(https?://\w.*?\)'
-    pattern_removable = r"\[|\]\(|\)"
-
-    # all markdown string
-    markdown_links = re.findall(pattern_link, string)
-
-    # markdowns image text infos - without markdown syntax
-    markdown_links_details = [
-        tuple(
-            map(
-                lambda s: re.sub(pattern_removable, '', s),
-                link.split('](')
-            ))
-        for link in markdown_links
-    ]
-    return markdown_links_details

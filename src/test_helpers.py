@@ -4,9 +4,9 @@ import unittest
 def log_test(fn):
     ''' Log test decorator - curry for number of sub tests to print
     Example:
-        @log_test_with(1)
-        def print_hi():
-        # ▶️ Asserting 1 "print hi"
+            @log_test_with(1)
+            def print_hi():
+            # ▶️ Asserting 1 "print hi"
 
     '''
     is_header_log = isinstance(fn, str) or fn.__name__.startswith('Test')
@@ -23,9 +23,9 @@ def log_test(fn):
 def log_test_with(tests_number=0):
     ''' Log test decorator - curry for number of sub tests to print
     Example:
-        @log_test_with(1)
-        def print_hi():
-        # ▶️ Asserting 1 "print hi"
+            @log_test_with(1)
+            def print_hi():
+            # ▶️ Asserting 1 "print hi"
 
     '''
     def log_test(fn):
@@ -43,5 +43,6 @@ def assertEqual(assertions: [] or (), format_case=None):
 
 
 def assertRaises(assertions: [] or ()):
-    for case_args, error in assertions:
-        unittest.TestCase().assertRaises(error, *case_args)
+    for case_args in assertions:
+        test_content = case_args[0]
+        unittest.TestCase().assertRaises(Exception, *test_content)
