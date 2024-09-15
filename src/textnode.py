@@ -119,18 +119,38 @@ def split_nodes_delimiter(original_nodes: [TextNode], delimiter: str, text_type:
 
 
 def extract_markdown_images(string):
-    # pattern = r'!\[\w+\]\(https?:\/\/\w*\/+\)`'
-    pattern = r'!\[\w.*?\]\(https?://\w.*?\)'
+    pattern_img = r'!\[\w.*?\]\(https?://\w.*?\)'
+    pattern_removable = r"!\[|\]\(|\)"
 
-    markdown_links = re.findall(pattern, string)
+    # all markdown string
+    markdown_images = re.findall(pattern_img, string)
+
+    # markdowns image text infos - without markdown syntax
+    markdown_images_details = [
+        tuple(
+            map(
+                lambda s: re.sub(pattern_removable, '', s),
+                image.split('](')
+            ))
+        for image in markdown_images
+    ]
+    return markdown_images_details
+
+
+def extract_markdown_links(string):
+    pattern_link = r'\[\w.*?\]\(https?://\w.*?\)'
+    pattern_removable = r"\[|\]\(|\)"
+
+    # all markdown string
+    markdown_links = re.findall(pattern_link, string)
+
+    # markdowns image text infos - without markdown syntax
     markdown_links_details = [
-        link.replace(
-            r"[!|\[|\(|\)|\]]", '') for link in markdown_links]
-    print('🔥 pattern:', pattern)
-    print('🔥 markdown_links:', markdown_links)
-    print('🔥 markdown_links_details:', markdown_links_details)
-
-
-text = "This is text with a ![rick roll](https://i.imgur.com/aKaOqIh.gif) and ![obi wan](https://i.imgur.com/fJRm4Vk.jpeg)"
-print(extract_markdown_images(text))
-# [("rick roll", "https://i.imgur.com/aKaOqIh.gif"), ("obi wan", "https://i.imgur.com/fJRm4Vk.jpeg")]
+        tuple(
+            map(
+                lambda s: re.sub(pattern_removable, '', s),
+                link.split('](')
+            ))
+        for link in markdown_links
+    ]
+    return markdown_links_details
